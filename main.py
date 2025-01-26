@@ -1,4 +1,5 @@
-from logger import logger
+from loguru import logger
+import sys
 from aiohttp import FormData
 from typing import List, Dict, Any
 from datetime import datetime, timedelta
@@ -8,6 +9,9 @@ import json
 import re
 import random
 
+logger.remove()
+logger.add(sys.stdout, level="DEBUG")
+logger.opt(ansi=True)
 async def main() -> None:
     try:
         cellphone = input("请输入你的手机号码，完成后按下 <Enter>：")
