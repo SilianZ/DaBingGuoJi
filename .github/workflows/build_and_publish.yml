@@ -31,11 +31,16 @@ jobs:
         run: |
           pyinstaller --onefile --windowed --name "DaBingGuoJi" main.py
 
-      - name: Codesign the app (optional)
+      - name: Ensure correct Xcode command line tools are selected
         run: |
           sudo xcode-select --switch /Library/Developer/CommandLineTools
-          sudo security add-keychain -p "$KEYCHAIN_PASSWORD" "$HOME/Library/Keychains/login.keychain-db"
-          sudo codesign --deep --force --verbose --sign "DaBingGuoJi: SilianZ" dist/DaBingGuoJi.app
+  
+      - name: Decode and install the developer certificate
+        run: |
+          echo "$DEVELOPER_CERTIFICATE_P12" | base64 --decode > /tmp/developer_cert.p12
+          sudo security create-keychain -p "$KEYCHAIN_PASSWORD" /tmp/my_keychain.keychain
+          sudo security import /tmp/developer_cert.p12 -k /tmp/my_keychain.keychain -P "$CERT_PASSWORD" -T /usr/bin/codesign
+          sudo security list-keychains -s /tmp/my_keychain.keychain
 
       - name: Create DMG file
         run: |
