@@ -34,13 +34,13 @@ jobs:
       - name: Create DMG file
         run: |
           npm install -g create-dmg
-          create-dmg dist/DaBingGuoJi.app ~/Desktop/DaBingGuoJi.dmg
+          create-dmg dist/DaBingGuoJi.app ~/Desktop/
           
       - name: Upload macOS .dmg file
         uses: actions/upload-artifact@v4
         with:
           name: macos-dmg
-          path: ~/Desktop/MyApp.dmg
+          path: ~/Desktop/
 
   build_windows:
     runs-on: windows-latest
