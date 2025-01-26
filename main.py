@@ -79,7 +79,7 @@ async def score(unit: str, cookie: str) -> None:
         data.add_field("unitId", unit)
         data.add_field("startTime", datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         seconds = await generate_random_time()
-        data.add_field("useTime", str(seconds))
+        data.add_field("useTime", str(seconds * 1000 + random.randint(100, 900)))
         data.add_field("endTime", (datetime.now() + timedelta(seconds=seconds)).strftime("%Y-%m-%d %H:%M:%S"))
         data.add_field("typeFlag", "1")
         data.add_field("score", "200")
@@ -110,8 +110,9 @@ async def main() -> None:
             for i in range(unit, unit + count):
                 await score(str(i), cookie)
         else:
-            unit = await parse_url()
-            await score(unit, cookie)
+            while True:
+                unit = await parse_url()
+                await score(unit, cookie)
 
     except Exception:
         logger.info("正在退出程序……")
@@ -120,5 +121,5 @@ if __name__ == "__main__":
     logger.info("正在启动程序……")
     try:
         asyncio.run(main())
-    except KeyboardInterrupt:
+    except Exception:
         pass
