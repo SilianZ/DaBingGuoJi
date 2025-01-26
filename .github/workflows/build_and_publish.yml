@@ -29,13 +29,24 @@ jobs:
 
       - name: Build macOS App
         run: |
-          pyinstaller --onefile --windowed main.py
+          pyinstaller --onefile --windowed --name "DaBingGuoJi" main.py
+
+      - name: Codesign the app (optional)
+        run: |
+          sudo xcode-select --switch /Library/Developer/CommandLineTools
+          sudo security add-keychain -p "$KEYCHAIN_PASSWORD" "$HOME/Library/Keychains/login.keychain-db"
+          sudo codesign --deep --force --verbose --sign "DaBingGuoJi: SilianZ" dist/DaBingGuoJi.app
+
+      - name: Create DMG file
+        run: |
+          npm install -g create-dmg
+          create-dmg dist/DaBingGuoJi.app ~/Desktop/DaBingGuoJi.dmg
           
-      - name: Upload macOS .app file
+      - name: Upload macOS .dmg file
         uses: actions/upload-artifact@v4
         with:
-          name: macos-app
-          path: dist
+          name: macos-dmg
+          path: ~/Desktop/MyApp.dmg
 
   build_windows:
     runs-on: windows-latest
@@ -57,7 +68,7 @@ jobs:
 
       - name: Build Windows EXE
         run: |
-          pyinstaller --onefile --windowed main.py
+          pyinstaller --onefile --windowed --name "DaBingGuoJi" main.py
           
       - name: Upload Windows .exe file
         uses: actions/upload-artifact@v4
